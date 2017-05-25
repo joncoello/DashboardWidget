@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="package.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -75,6 +76,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="index.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
