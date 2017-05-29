@@ -1,5 +1,7 @@
-﻿// main componenet to be wrapped around widget element
-class WidgetComponenet {
+﻿/**
+* Main component to be wrapped around widget element
+*/
+class WidgetComponent {
     
     constructor(public element: Element, public settings: WidgetSettings) {
         settings.loadData(element);
@@ -7,20 +9,23 @@ class WidgetComponenet {
 
 }
 
-// widget settings including event callbacks
+/**
+* Widget settings including event callbacks
+*/
 class WidgetSettings {
     public loadData: (element: Element) => void;
 }
 
-// singleton for managing widgets on a page
-// widgets register themselves then can be centrally managed
+/**
+* Singleton for managing widgets on a page widgets register themselves then can be centrally managed.
+*/
 class WidgetManager {
 
     // singleton implementation
     private static _instance: WidgetManager;
 
     private constructor() {
-        this._widgets = new Array<WidgetComponenet>();
+        this._widgets = new Array<WidgetComponent>();
     }
 
     public static get Instance() : WidgetManager {
@@ -28,22 +33,31 @@ class WidgetManager {
     }
     
     // registry of widgets on a page
-    private _widgets: Array<WidgetComponenet>
-
-    // add a widget to the collection
-    public registerWidget(widget: WidgetComponenet): void {
+    private _widgets: Array<WidgetComponent>
+    
+    /**
+     * Register a widget with the manager.
+     * @param widget    the widget to register.
+     */
+    public registerWidget(widget: WidgetComponent): void {
         this._widgets.push(widget);
     }
 
+    /**
+     * Refresh data of all widgets registered.
+     */
     public refreshWidgets(): void {
-        this._widgets.forEach((w: WidgetComponenet) => {
+        this._widgets.forEach((w: WidgetComponent) => {
             w.settings.loadData(w.element);
         });
     }
 
+    /**
+     * Return layout of all widgets registered with manager.
+     */
     public getLayout(): string {
         var widgetsInfo = []
-        this._widgets.forEach((w: WidgetComponenet) => {
+        this._widgets.forEach((w: WidgetComponent) => {
 
             var e = w.element.parentElement.parentElement;
             var id = w.element.id;
