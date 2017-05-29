@@ -2,7 +2,12 @@
 * Main component to be wrapped around widget element
 */
 class WidgetComponent {
-    
+
+    /**
+     * Register a widget with the manager.
+     * @param element    The html element to attach the widget to.
+     * @param settings    The settings including callbacks to be applied to the widget.
+     */
     constructor(public element: Element, public settings: WidgetSettings) {
         settings.loadData(element);
     }
@@ -28,6 +33,9 @@ class WidgetManager {
         this._widgets = new Array<WidgetComponent>();
     }
 
+    /**
+     * Singleton property
+     */
     public static get Instance() : WidgetManager {
         return this._instance || (this._instance = new this());
     }
