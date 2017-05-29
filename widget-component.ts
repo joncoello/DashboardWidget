@@ -18,7 +18,24 @@ class WidgetComponent {
 * Widget settings including event callbacks
 */
 class WidgetSettings {
+
+    /**
+    * call into widget to load the data
+    * @param element    The html element the widget is attached to
+    */
     public loadData: (element: Element) => void;
+
+    /**
+    * Save any customisation data by adding it to the array
+    * @param customisation    The array of customisation items
+    */
+    public saveCustomisation: (customisation: Array<{ key: string, value: any }>) => void;
+
+    /**
+    * Restore any customisation data by restrieving it from the array - allow for items not being present
+    * @param customisation    The array of customisation items
+    */
+    public restoreCustomisation: (customisation: Array<{ key: string, value: any }>) => void;
 }
 
 /**
