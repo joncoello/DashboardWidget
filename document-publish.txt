@@ -1,0 +1,1 @@
+﻿typedoc --out ../doc/ --readme readme.md --theme minimal
