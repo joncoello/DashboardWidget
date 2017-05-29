@@ -29,13 +29,13 @@ class WidgetSettings {
     * Save any customisation data by adding it to the array
     * @param customisation    The array of customisation items
     */
-    public saveCustomisation: (customisation: Array<{ key: string, value: any }>) => void;
+    public saveCustomisation: (customisation: { [id: string]: any }) => void;
 
     /**
     * Restore any customisation data by restrieving it from the array - allow for items not being present
     * @param customisation    The array of customisation items
     */
-    public restoreCustomisation: (customisation: Array<{ key: string, value: any }>) => void;
+    public restoreCustomisation: (customisation: { [id: string]: any }) => void;
 }
 
 /**
