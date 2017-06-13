@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "docs": "typedoc --out ../doc/ --readme readme.md --theme minimal"
   },
   "author": "Jon Coello",
   "license": "ISC"
