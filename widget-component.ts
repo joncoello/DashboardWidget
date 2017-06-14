@@ -52,13 +52,15 @@ class WidgetManager {
     
     // registry of widgets on a page
     private _lastWidgetID: number;
-    private _widgets: Array<WidgetComponent>
+    public Widgets: Array<WidgetComponent>
     private _lastInstanceID: number;
-    private _instances: Array<WidgetInstance>
+    public Instances: Array<WidgetInstance>
 
     private constructor() {
-        this._widgets = new Array<WidgetComponent>();
-        this._instances = new Array<WidgetInstance>();
+        this.Widgets = new Array<WidgetComponent>();
+        this.Instances = new Array<WidgetInstance>();
+        this._lastWidgetID = 0;
+        this._lastInstanceID = 0;
     }
 
     /**
@@ -68,18 +70,18 @@ class WidgetManager {
     public registerWidget(widget: WidgetComponent): void {
         this._lastWidgetID++;
         widget.id = this._lastWidgetID;
-        this._widgets.push(widget);
+        this.Widgets.push(widget);
     }
 
     /**
      * Create an instance of a widget.
      * @param widget    the widget to register.
      */
-    public createWidget(element: Element, widgetID: number): void {
+    public createWidget(element: Element, widgetName: string): void {
         this._lastInstanceID++;
-        var widget = this._widgets.filter(w => w.id === widgetID)[0];
+        var widget = this.Widgets.filter(w => w.name === widgetName)[0];
         var instance = new WidgetInstance(this._lastInstanceID, widget, element);
-        this._widgets.push(widget);
+        this.Instances.push(instance);
         instance.widgetType.loadData(element);
     }
 
@@ -87,7 +89,7 @@ class WidgetManager {
      * Refresh data of all widgets registered.
      */
     public refreshWidgets(): void {
-        this._instances.forEach((i: WidgetInstance) => {
+        this.Instances.forEach((i: WidgetInstance) => {
             i.widgetType.loadData(i.element);
         });
     }
@@ -97,7 +99,7 @@ class WidgetManager {
      */
     public getLayout(): string {
         var widgetsInfo = []
-        this._instances.forEach((i: WidgetInstance) => {
+        this.Instances.forEach((i: WidgetInstance) => {
 
             var e = i.element.parentElement.parentElement;
             var id = i.element.id;

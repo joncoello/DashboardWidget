@@ -1,6 +1,6 @@
 {
   "name": "dashboardwidget",
-  "version": "1.0.9",
+  "version": "1.0.14",
   "description": "",
   "main": "index.js",
   "scripts": {
