@@ -8,6 +8,12 @@ class WidgetComponent {
     constructor(public name: string) { }
 
     /**
+    * setup initial state of widget
+    * @param element    The html element the widget is attached to
+    */
+    public setupWidget: (element: Element) => void;
+
+    /**
     * call into widget to load the data
     * @param element    The html element the widget is attached to
     */
@@ -30,9 +36,9 @@ class WidgetComponent {
 * An individual instance of a widget on a dashboard
 */
 class WidgetInstance {
-    
+
     constructor(public id: number, public widgetType: WidgetComponent, public element: Element) { }
-    
+
 }
 
 /**
@@ -42,20 +48,21 @@ class WidgetManager {
 
     // singleton implementation
     private static _instance: WidgetManager;
-    
+
     /**
      * Singleton property
      */
-    public static get Instance() : WidgetManager {
+    public static get Instance(): WidgetManager {
         return this._instance || (this._instance = new this());
     }
-    
+
     // registry of widgets on a page
     private _lastWidgetID: number;
     public Widgets: Array<WidgetComponent>
     private _lastInstanceID: number;
     public Instances: Array<WidgetInstance>
 
+    // private constructor to enforce singleton
     private constructor() {
         this.Widgets = new Array<WidgetComponent>();
         this.Instances = new Array<WidgetInstance>();
@@ -82,6 +89,7 @@ class WidgetManager {
         var widget = this.Widgets.filter(w => w.name === widgetName)[0];
         var instance = new WidgetInstance(this._lastInstanceID, widget, element);
         this.Instances.push(instance);
+        instance.widgetType.setupWidget(element);
         instance.widgetType.loadData(element);
     }
 
@@ -113,5 +121,44 @@ class WidgetManager {
         });
         return widgetsInfo.join(",");
     }
-    
+
+    // pub/sub hub
+    private _subscribers: { [id: string]: Array<(message: any) => void> } = {};
+
+     /**
+     * Register a subscriber to an event
+     * @param eventName    the name of the event to subscribe to
+     * @param callback    the method to invoke when the event occurs
+     */
+    public registerSubscriber(eventName: string, callback: (message: any) => void) {
+
+        var eventNameLower = eventName.toLowerCase();
+
+        // prevent double subscription ?
+        this._subscribers[eventNameLower].push(callback);
+
+    }
+
+     /**
+     * Raise the event
+     * @param eventName    the name of the event to subscribe to
+     * @param message    the message to pass to the callback - todo: typed?
+     */
+    public raiseEvent(eventName: string, message: any) {
+
+        var eventNameLower = eventName.toLowerCase();
+
+        // prevent double subscription ?
+        this._subscribers[eventNameLower].forEach(e => {
+            try {
+                e(message);
+            }
+            catch (e) {
+                console.error('error invoking subsciber for event ' + eventName);
+                console.error(e);
+            }
+        });
+
+    }
+
 }
