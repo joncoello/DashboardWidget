@@ -123,27 +123,35 @@ class WidgetManager {
     }
 
     // pub/sub hub
-    private _subscribers: { [id: string]: Array<(message: any) => void> } = {};
+    private _subscribers: { [id: string]: Array<(message: any) => void> } = {}; // todo: should it be an any for messgae?
 
-     /**
-     * Register a subscriber to an event
-     * @param eventName    the name of the event to subscribe to
-     * @param callback    the method to invoke when the event occurs
-     */
+    /**
+    * Register a subscriber to an event
+    * @param eventName    the name of the event to subscribe to
+    * @param callback    the method to invoke when the event occurs
+    */
     public registerSubscriber(eventName: string, callback: (message: any) => void) {
+
+        console.log('registering ' + eventName);
 
         var eventNameLower = eventName.toLowerCase();
 
-        // prevent double subscription ?
+        if (this._subscribers[eventNameLower] == null) {
+            this._subscribers[eventNameLower] = new Array<(message: any) => void>();
+        }
+
+        // todo: prevent double subscription ? - v2
         this._subscribers[eventNameLower].push(callback);
+
+        console.log('registered ' + eventName);
 
     }
 
-     /**
-     * Raise the event
-     * @param eventName    the name of the event to subscribe to
-     * @param message    the message to pass to the callback - todo: typed?
-     */
+    /**
+    * Raise the event
+    * @param eventName    the name of the event to subscribe to
+    * @param message    the message to pass to the callback - todo: typed?
+    */
     public raiseEvent(eventName: string, message: any) {
 
         var eventNameLower = eventName.toLowerCase();
