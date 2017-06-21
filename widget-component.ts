@@ -14,6 +14,12 @@ class WidgetComponent {
     public setupWidget: (element: Element) => void;
 
     /**
+    * setup initial state of widget
+    * @param element    The html element the widget is attached to
+    */
+    public removeWidget: (element: Element) => void;
+
+    /**
     * call into widget to load the data
     * @param element    The html element the widget is attached to
     */
@@ -84,13 +90,19 @@ class WidgetManager {
      * Create an instance of a widget.
      * @param widget    the widget to register.
      */
-    public createWidget(element: Element, widgetName: string): void {
+    public createWidget(element: Element, widgetName: string): WidgetInstance {
+
+        // create new instance
         this._lastInstanceID++;
         var widget = this.Widgets.filter(w => w.name === widgetName)[0];
         var instance = new WidgetInstance(this._lastInstanceID, widget, element);
         this.Instances.push(instance);
+
+        // fire initialisation events
         instance.widgetType.setupWidget(element);
         instance.widgetType.loadData(element);
+
+        return instance;
     }
 
     /**
@@ -163,27 +175,50 @@ class WidgetManager {
     }
 
     // pub/sub hub
-    private _subscribers: { [id: string]: Array<(message: any) => void> } = {}; // todo: should it be an any for messgae?
+    private _subscribers: { [id: string]: Array<WidgetDelegate> } = {}; // todo: should it be an any for messgae?
 
     /**
     * Register a subscriber to an event
     * @param eventName    the name of the event to subscribe to
     * @param callback    the method to invoke when the event occurs
     */
-    public registerSubscriber(eventName: string, callback: (message: any) => void) {
+    public registerSubscriber(eventName: string, delegate: WidgetDelegate) {
 
         console.log('registering ' + eventName);
 
         var eventNameLower = eventName.toLowerCase();
 
         if (this._subscribers[eventNameLower] == null) { // todo: using == supports null and nothing - best way?
-            this._subscribers[eventNameLower] = new Array<(message: any) => void>();
+            this._subscribers[eventNameLower] = [];
         }
 
         // todo: prevent double subscription ? - v2
-        this._subscribers[eventNameLower].push(callback);
+        this._subscribers[eventNameLower].push(delegate);
 
         console.log('registered ' + eventName);
+
+    }
+
+    /**
+    * Unregister a subscriber to an event
+    * @param eventName    the name of the event to subscribe to
+    * @param callback    the method to invoke when the event occurs
+    */
+    public unregisterSubscriber(eventName: string, delegate: WidgetDelegate) {
+
+        console.log('unregistering ' + eventName);
+
+        var eventNameLower = eventName.toLowerCase();
+
+        if (this._subscribers[eventNameLower] == null) { // todo: using == supports null and nothing - best way?
+            this._subscribers[eventNameLower] = [];
+        }
+
+        // todo: prevent double subscription ? - v2
+        var indexOfItemToRemove = this._subscribers[eventNameLower].indexOf(delegate);
+        this._subscribers[eventNameLower].splice(indexOfItemToRemove);
+
+        console.log('unnregistered ' + eventName);
 
     }
 
@@ -199,7 +234,7 @@ class WidgetManager {
         // prevent double subscription ?
         this._subscribers[eventNameLower].forEach(e => {
             try {
-                e(message);
+                e.callback(message, e.instanceElement);
             }
             catch (e) {
                 console.error('error invoking subsciber for event ' + eventName);
@@ -209,4 +244,9 @@ class WidgetManager {
 
     }
 
+}
+
+class WidgetDelegate {
+    public callback: (message: any, element: Element) => void;
+    public instanceElement: Element;
 }
