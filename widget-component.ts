@@ -133,6 +133,8 @@ class WidgetManager {
 
     public saveLayout() {
 
+        console.log('layout saving');
+
         this._layout.length = 0; // todo: best way of clearing an array ?
 
         this.Instances.forEach((i: WidgetInstance) => {
@@ -147,12 +149,17 @@ class WidgetManager {
                 width: widgetElement.getAttribute('data-gs-width').valueOf(),
                 height: widgetElement.getAttribute('data-gs-height').valueOf()
             });
-
-            console.log('layout saved');
-            console.log(this._layout);
-                        
+                                    
         });
 
+
+        console.log('layout saved');
+        console.log(this._layout);
+
+    }
+
+    public loadLayout(): Array<{name: string, x: string, y: string, width: string, height: string }> {
+        return this._layout;
     }
 
     // pub/sub hub
