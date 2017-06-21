@@ -122,6 +122,39 @@ class WidgetManager {
         return widgetsInfo.join(",");
     }
 
+    // layout
+    private _layout: Array<{
+        name: string,
+        x: string,
+        y: string,
+        width: string,
+        height: string
+    }> = [];
+
+    public saveLayout() {
+
+        this._layout.length = 0; // todo: best way of clearing an array ?
+
+        this.Instances.forEach((i: WidgetInstance) => {
+
+            var widgetContainer = i.element.parentElement;
+            var widgetElement = widgetContainer.parentElement;
+
+            this._layout.push({
+                name: i.widgetType.name,
+                x: widgetElement.getAttribute('data-gs-x').valueOf(),
+                y: widgetElement.getAttribute('data-gs-y').valueOf(),
+                width: widgetElement.getAttribute('data-gs-width').valueOf(),
+                height: widgetElement.getAttribute('data-gs-height').valueOf()
+            });
+
+            console.log('layout saved');
+            console.log(this._layout);
+                        
+        });
+
+    }
+
     // pub/sub hub
     private _subscribers: { [id: string]: Array<(message: any) => void> } = {}; // todo: should it be an any for messgae?
 
@@ -136,7 +169,7 @@ class WidgetManager {
 
         var eventNameLower = eventName.toLowerCase();
 
-        if (this._subscribers[eventNameLower] == null) {
+        if (this._subscribers[eventNameLower] == null) { // todo: using == supports null and nothing - best way?
             this._subscribers[eventNameLower] = new Array<(message: any) => void>();
         }
 
