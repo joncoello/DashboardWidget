@@ -232,15 +232,17 @@ class WidgetManager {
         var eventNameLower = eventName.toLowerCase();
 
         // prevent double subscription ?
-        this._subscribers[eventNameLower].forEach(e => {
-            try {
-                e.callback(message, e.instanceElement);
-            }
-            catch (e) {
-                console.error('error invoking subsciber for event ' + eventName);
-                console.error(e);
-            }
-        });
+        if (this._subscribers[eventNameLower] != null) {
+            this._subscribers[eventNameLower].forEach(e => {
+                try {
+                    e.callback(message, e.instanceElement);
+                }
+                catch (e) {
+                    console.error('error invoking subsciber for event ' + eventName);
+                    console.error(e);
+                }
+            });
+        }
 
     }
 
