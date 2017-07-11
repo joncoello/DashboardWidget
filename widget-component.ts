@@ -68,8 +68,7 @@ class WidgetManager {
     private _lastInstanceID: number;
     public Instances: Array<WidgetInstance>
 
-    // private constructor to enforce singleton
-    private constructor() {
+    constructor() {
         this.Widgets = new Array<WidgetComponent>();
         this.Instances = new Array<WidgetInstance>();
         this._lastWidgetID = 0;
